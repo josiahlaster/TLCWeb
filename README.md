@@ -47,8 +47,8 @@ TLCWeb/
 ## Contact
 
 For questions about this website, contact Transitions Legacy Center:
-- Phone: (555) 123-4567
-- Email: info@transitionslegacy.org
+- Phone: 
+- Email: info@transitionslegacy.com
 
 ---
 
