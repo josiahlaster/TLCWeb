@@ -1,6 +1,6 @@
 # TLCWeb - Transitions Legacy Center Website
 
-Mentoring agency website built for Transitions Legacy Center.
+Peer Mentoring agency website built for Transitions Legacy Center.
 
 ## Features
 
