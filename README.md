@@ -1,14 +1,10 @@
 # TLCWeb - Transitions Legacy Center Website
 
-A modern, professional peer mentoring agency website built for Transitions Legacy Center.
+Mentoring agency website built for Transitions Legacy Center.
 
 ## Features
 
-- **Modern Design**: Clean, professional layout with gold, deep blue, and white color scheme
-- **Responsive**: Works perfectly on desktop, tablet, and mobile devices
-- **Interactive**: Smooth scrolling, animated counters, and form validation
-- **Accessible**: Screen reader friendly with proper ARIA labels and keyboard navigation
-- **Performance Optimized**: Lazy loading, throttled scroll events, and efficient animations
+
 
 ## Sections
 
