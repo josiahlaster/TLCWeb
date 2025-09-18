@@ -192,6 +192,9 @@ img {
     color: var(--white);
     padding: 10px 24px;
     border-radius: var(--border-radius);
+    white-space: nowrap;
+    overflow: visible;
+    min-width: max-content;
 }
 
 .nav-link.cta-button:hover {
