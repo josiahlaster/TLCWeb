@@ -218,7 +218,10 @@ img {
 
 /* ===== HERO SECTION ===== */
 .hero {
-    background: linear-gradient(135deg, var(--deep-blue) 0%, var(--light-blue) 100%);
+    /*background: linear-gradient(135deg, var(--deep-blue) 0%, var(--light-blue) 100%); */
+    background: url('water.gif') no-repeat center center;
+background-size: cover;
+
     color: var(--white);
     padding: 140px 0 80px;
     min-height: 100vh;

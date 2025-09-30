@@ -37,11 +37,9 @@ TLCWeb/
 ├── css/
 │   └── style.css       # Main stylesheet
 ├── js/
-│   └── script.js       # JavaScript functionality
-├── assets/
-│   ├── TLCLogo.png     # Main logo
-│   └── TLCLogo2.png    # Secondary logo
-└── README.md           # This file
+│   └── script.js
+├── assets
+└── README
 ```
 
 ## Contact
