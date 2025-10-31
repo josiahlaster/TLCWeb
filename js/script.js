@@ -41,6 +41,10 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// ===== EMAILJS INITIALIZATION =====
+// Initialize EmailJS with your public key
+emailjs.init('ldFc3kaycY8hJJKhy');
+
 // ===== FORM HANDLING =====
 const contactForm = document.querySelector('.form');
 
@@ -48,7 +52,6 @@ contactForm?.addEventListener('submit', function(e) {
     e.preventDefault();
     
     // Get form data
-    const formData = new FormData(this);
     const name = this.querySelector('input[type="text"]').value;
     const email = this.querySelector('input[type="email"]').value;
     const phone = this.querySelector('input[type="tel"]').value;
@@ -66,20 +69,37 @@ contactForm?.addEventListener('submit', function(e) {
         return;
     }
     
-    // Simulate form submission
+    // Prepare form submission
     const submitButton = this.querySelector('.btn-primary');
     const originalText = submitButton.textContent;
     
     submitButton.textContent = 'Sending...';
     submitButton.disabled = true;
     
-    // Simulate API call
-    setTimeout(() => {
-        showNotification('Thank you! Your message has been sent. We\'ll get back to you soon.', 'success');
-        this.reset();
-        submitButton.textContent = originalText;
-        submitButton.disabled = false;
-    }, 2000);
+    // EmailJS parameters
+    const templateParams = {
+        from_name: name,
+        from_email: email,
+        phone: phone || 'Not provided',
+        service_interest: service,
+        message: message,
+        to_email: 'info@transitionslegacy.com'
+    };
+    
+    // Send email using EmailJS
+    emailjs.send('service_jpgg8a6', 'template_roubhwk', templateParams)
+        .then(() => {
+            showNotification('Thank you! Your message has been sent. We\'ll get back to you soon.', 'success');
+            this.reset();
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+        })
+        .catch((error) => {
+            console.error('EmailJS Error:', error);
+            showNotification('Sorry, there was an error sending your message. Please try again.', 'error');
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+        });
 });
 
 // ===== UTILITY FUNCTIONS =====
