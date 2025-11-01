@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://transitionslegacycenter.com/sitemap.xml
+
+# Optimize crawl budget
+Crawl-delay: 1
+
+# Block non-essential files
+Disallow: /css/
+Disallow: /js/
+Disallow: /*.json$
+Disallow: /*.txt$
+
+# Allow important assets
+Allow: /TLCLogo.png
+Allow: /assets/
+
+# Block development files
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: *.log
+Disallow: *.tmp
