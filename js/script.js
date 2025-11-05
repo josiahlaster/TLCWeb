@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===== COUNTER ANIMATION =====
-function animateCounter(element, target, duration = 2000) {
+function animateCounter(element, target, suffix, duration = 2000) {
     let current = 0;
     const increment = target / (duration / 16);
     const timer = setInterval(() => {
@@ -206,7 +206,7 @@ function animateCounter(element, target, duration = 2000) {
         if (current >= target) {
             current = target;
             clearInterval(timer);
-            element.textContent = Math.floor(current) + (target >= 1000 ? '+' : '%');
+            element.textContent = Math.floor(current) + suffix;
         } else {
             element.textContent = Math.floor(current);
         }
@@ -220,9 +220,10 @@ const counterObserver = new IntersectionObserver((entries) => {
             const element = entry.target;
             const text = element.textContent;
             const number = parseInt(text.replace(/[^0-9]/g, ''));
+            const suffix = text.replace(/[0-9]/g, '');
             
             if (number) {
-                animateCounter(element, number);
+                animateCounter(element, number, suffix);
                 counterObserver.unobserve(element);
             }
         }
