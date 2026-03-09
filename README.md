@@ -46,7 +46,7 @@ TLCWeb/
 
 For questions about this website, contact Transitions Legacy Center:
 - Phone: 
-- Email: info@transitionslegacy.com
+- Email: info@transitionslegacycenter.com
 
 ---
 
