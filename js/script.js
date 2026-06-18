@@ -168,33 +168,69 @@ function showNotification(message, type = 'success') {
     }, 5000);
 }
 
-// ===== SCROLL ANIMATIONS =====
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
+// ===== SCROLL REVEAL SYSTEM =====
+/**
+ * Generic scroll-reveal: add class="reveal fade-up" (or fade-left/right/zoom-in)
+ * to any element. Optionally add reveal-delay-1..5 for staggered timing.
+ * The JS observer adds 'is-visible' when the element enters the viewport.
+ */
+const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
+            entry.target.classList.add('is-visible');
+            // Keep observing so re-entry re-triggers (comment out unobserve to replay)
+            // revealObserver.unobserve(entry.target);
         }
     });
-}, observerOptions);
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
-// Observe elements for scroll animations
-document.addEventListener('DOMContentLoaded', () => {
-    const animateElements = document.querySelectorAll(
-        '.service-card, .mentor-card, .testimonial-card, .stat-item'
-    );
-    
-    animateElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
+// Section-header underline reveal
+const headerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('header-revealed');
+        }
     });
+}, { threshold: 0.3 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Wire up all pre-marked reveal elements
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Section headers
+    document.querySelectorAll('.section-header').forEach(el => headerObserver.observe(el));
+
+    // ----- Programmatically assign reveal classes to key elements -----
+
+    // About section
+    const aboutContent = document.querySelector('.about-content');
+    const aboutImage   = document.querySelector('.about-image');
+    if (aboutContent) { aboutContent.classList.add('reveal', 'fade-left'); revealObserver.observe(aboutContent); }
+    if (aboutImage)   { aboutImage.classList.add('reveal', 'fade-right', 'reveal-delay-2'); revealObserver.observe(aboutImage); }
+
+    // Stat items — staggered fade-up
+    document.querySelectorAll('.stat-item').forEach((el, i) => {
+        el.classList.add('reveal', 'fade-up', `reveal-delay-${Math.min(i + 1, 5)}`);
+        revealObserver.observe(el);
+    });
+
+    // Service cards — staggered zoom-in
+    document.querySelectorAll('.service-card').forEach((el, i) => {
+        el.classList.add('reveal', 'zoom-in', `reveal-delay-${Math.min(i + 1, 5)}`);
+        revealObserver.observe(el);
+    });
+
+    // Testimonial cards — staggered fade-up
+    document.querySelectorAll('.testimonial-card').forEach((el, i) => {
+        el.classList.add('reveal', 'fade-up', `reveal-delay-${Math.min(i + 1, 5)}`);
+        revealObserver.observe(el);
+    });
+
+    // Contact info & form
+    const contactInfo = document.querySelector('.contact-info');
+    const contactForm2 = document.querySelector('.contact-form');
+    if (contactInfo)  { contactInfo.classList.add('reveal', 'fade-left');  revealObserver.observe(contactInfo); }
+    if (contactForm2) { contactForm2.classList.add('reveal', 'fade-right', 'reveal-delay-2'); revealObserver.observe(contactForm2); }
 });
 
 // ===== COUNTER ANIMATION =====
@@ -221,7 +257,6 @@ const counterObserver = new IntersectionObserver((entries) => {
             const text = element.textContent;
             const number = parseInt(text.replace(/[^0-9]/g, ''));
             const suffix = text.replace(/[0-9]/g, '');
-            
             if (number) {
                 animateCounter(element, number, suffix);
                 counterObserver.unobserve(element);
@@ -231,46 +266,60 @@ const counterObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const statNumbers = document.querySelectorAll('.stat-item h4, .hero-card h3');
-    statNumbers.forEach(stat => {
+    document.querySelectorAll('.stat-item h4, .hero-card h3').forEach(stat => {
         counterObserver.observe(stat);
     });
 });
 
+// ===== SPOTLIGHT EFFECT ON SERVICE CARDS =====
+/**
+ * Each service card gets a .spotlight div injected. On mousemove we update
+ * CSS custom properties --mx / --my so the radial gradient follows the cursor.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.service-card').forEach(card => {
+        // Inject spotlight element
+        const spot = document.createElement('div');
+        spot.classList.add('spotlight');
+        card.prepend(spot);
 
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width)  * 100;
+            const y = ((e.clientY - rect.top)  / rect.height) * 100;
+            card.style.setProperty('--mx', `${x}%`);
+            card.style.setProperty('--my', `${y}%`);
+        });
+    });
+});
 
 // ===== LAZY LOADING IMAGES =====
-const imageObserver = new IntersectionObserver((entries, observer) => {
+const imageObserver = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             const img = entry.target;
             if (img.dataset.src) {
                 img.src = img.dataset.src;
                 img.classList.remove('lazy');
-                observer.unobserve(img);
+                obs.unobserve(img);
             }
         }
     });
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const lazyImages = document.querySelectorAll('img[data-src]');
-    lazyImages.forEach(img => imageObserver.observe(img));
+    document.querySelectorAll('img[data-src]').forEach(img => imageObserver.observe(img));
 });
 
 // ===== ACCESSIBILITY IMPROVEMENTS =====
 document.addEventListener('DOMContentLoaded', () => {
-    // Add keyboard navigation for hamburger menu
     hamburger?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             hamburger.click();
         }
     });
-    
-    // Add focus trap for mobile menu
-    const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && navMenu?.classList.contains('active')) {
             hamburger?.classList.remove('active');
@@ -281,7 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===== PERFORMANCE OPTIMIZATION =====
-// Throttle scroll events
 function throttle(func, limit) {
     let inThrottle;
     return function() {
@@ -292,10 +340,9 @@ function throttle(func, limit) {
             inThrottle = true;
             setTimeout(() => inThrottle = false, limit);
         }
-    }
+    };
 }
 
-// Use throttled scroll for navbar effect
 const throttledScroll = throttle(() => {
     if (window.scrollY > 100) {
         navbar?.classList.add('scrolled');
@@ -306,26 +353,25 @@ const throttledScroll = throttle(() => {
 
 window.addEventListener('scroll', throttledScroll);
 
-// ===== PRELOADER (optional) =====
+// ===== HERO ENTRANCE ANIMATION =====
 document.addEventListener('DOMContentLoaded', () => {
-    // Add smooth entrance animation to hero content
     const heroContent = document.querySelector('.hero-content');
-    const heroImage = document.querySelector('.hero-image');
-    
+    const heroImage   = document.querySelector('.hero-image');
+
     if (heroContent && heroImage) {
         heroContent.style.opacity = '0';
         heroContent.style.transform = 'translateY(30px)';
         heroImage.style.opacity = '0';
         heroImage.style.transform = 'translateY(30px)';
-        
+
         setTimeout(() => {
             heroContent.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-            heroImage.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-            heroContent.style.opacity = '1';
-            heroContent.style.transform = 'translateY(0)';
-            
+            heroImage.style.transition   = 'opacity 0.8s ease, transform 0.8s ease';
+            heroContent.style.opacity    = '1';
+            heroContent.style.transform  = 'translateY(0)';
+
             setTimeout(() => {
-                heroImage.style.opacity = '1';
+                heroImage.style.opacity   = '1';
                 heroImage.style.transform = 'translateY(0)';
             }, 200);
         }, 300);
